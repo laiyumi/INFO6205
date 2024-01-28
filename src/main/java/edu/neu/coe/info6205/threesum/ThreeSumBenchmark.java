@@ -10,15 +10,19 @@ import java.util.function.UnaryOperator;
 
 public class ThreeSumBenchmark {
     public ThreeSumBenchmark(int runs, int n, int m) {
+        // run times
         this.runs = runs;
+        // an int array with n ints and each int is in range -m to m-1.
         this.supplier = new Source(n, m).intsSupplier(10);
+        // array has n elements
         this.n = n;
     }
 
     public void runBenchmarks() {
+        // test same input with different algorithm
         System.out.println("ThreeSumBenchmark: N=" + n);
         benchmarkThreeSum("ThreeSumQuadratic", (xs) -> new ThreeSumQuadratic(xs).getTriples(), n, timeLoggersQuadratic);
-        benchmarkThreeSum("ThreeSumQuadrithmic", (xs) -> new ThreeSumQuadrithmic(xs).getTriples(), n, timeLoggersQuadrithmic);
+//        benchmarkThreeSum("ThreeSumQuadrithmic", (xs) -> new ThreeSumQuadrithmic(xs).getTriples(), n, timeLoggersQuadrithmic);
         benchmarkThreeSum("ThreeSumCubic", (xs) -> new ThreeSumCubic(xs).getTriples(), n, timeLoggersCubic);
     }
 
@@ -34,7 +38,22 @@ public class ThreeSumBenchmark {
 
     private void benchmarkThreeSum(final String description, final Consumer<int[]> function, int n, final TimeLogger[] timeLoggers) {
         if (description.equals("ThreeSumCubic") && n > 4000) return;
-        // TO BE IMPLEMENTED 
+        // TO BE IMPLEMENTED
+        int[] arr = new int[3];
+        arr[0] = 1;
+        arr[1] = 2;
+        arr[2] = 3;
+        function.accept(arr);
+
+        // print out the three sum result
+
+        // print out the time log
+
+//        if(description.equals("ThreeSumQuadratic")) return;
+
+
+
+//        if (description.equals("ThreeSumQuadradrithmic")) return;
 
 
 
@@ -42,8 +61,7 @@ public class ThreeSumBenchmark {
 
 
 
-
-throw new RuntimeException("implementation missing");
+//throw new RuntimeException("implementation missing");
     }
 
     private final static TimeLogger[] timeLoggersCubic = {

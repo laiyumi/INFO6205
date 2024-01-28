@@ -50,21 +50,27 @@ public class ThreeSumQuadraticWithCalipers implements ThreeSum {
         List<Triple> triples = new ArrayList<>();
         // TO BE IMPLEMENTED  : use function to qualify triples and to navigate otherwise.
 
-        // create all possible triples
+        // only if a[i] < 0 might exist candidate triples
+        if (a[i] < 0){
+            int j = i + 1;
+            int k = a.length - 1;
+            while (j < k){
+                // use function to determine whether the triple is valid
+                Triple t = new Triple(a[i], a[j], a[k]);
 
-
-        // compare each triple with 0 using function
-
-
-        // if return 0, then add this triple to triples
-
-
+                if (function.apply(t) == 0){
+                    triples.add(t);
+                    j++;
+                    k--;
+                } else if (function.apply(t) > 0){
+                    k--;
+                } else {
+                    j++;
+                }
+            }
+        }
         return triples;
 
-
-
-
-//throw new RuntimeException("implementation missing");
     }
 
     private final int[] a;

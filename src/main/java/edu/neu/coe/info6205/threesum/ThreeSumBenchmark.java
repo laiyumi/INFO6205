@@ -1,6 +1,7 @@
 package edu.neu.coe.info6205.threesum;
 
 import edu.neu.coe.info6205.util.Benchmark_Timer;
+import edu.neu.coe.info6205.util.Stopwatch;
 import edu.neu.coe.info6205.util.TimeLogger;
 import edu.neu.coe.info6205.util.Utilities;
 
@@ -22,8 +23,9 @@ public class ThreeSumBenchmark {
         // test same input with different algorithm
         System.out.println("ThreeSumBenchmark: N=" + n);
         benchmarkThreeSum("ThreeSumQuadratic", (xs) -> new ThreeSumQuadratic(xs).getTriples(), n, timeLoggersQuadratic);
-//        benchmarkThreeSum("ThreeSumQuadrithmic", (xs) -> new ThreeSumQuadrithmic(xs).getTriples(), n, timeLoggersQuadrithmic);
+        benchmarkThreeSum("ThreeSumQuadrithmic", (xs) -> new ThreeSumQuadrithmic(xs).getTriples(), n, timeLoggersQuadrithmic);
         benchmarkThreeSum("ThreeSumCubic", (xs) -> new ThreeSumCubic(xs).getTriples(), n, timeLoggersCubic);
+        benchmarkThreeSum("ThreeSumQuadraticWithCaliper", (xs) -> new ThreeSumQuadraticWithCalipers(xs).getTriples(), n, timeLoggersQuadratic);
     }
 
     public static void main(String[] args) {
@@ -39,29 +41,18 @@ public class ThreeSumBenchmark {
     private void benchmarkThreeSum(final String description, final Consumer<int[]> function, int n, final TimeLogger[] timeLoggers) {
         if (description.equals("ThreeSumCubic") && n > 4000) return;
         // TO BE IMPLEMENTED
-        int[] arr = new int[3];
-        arr[0] = 1;
-        arr[1] = 2;
-        arr[2] = 3;
-        function.accept(arr);
+        System.out.println("Method: " + description);
+            try(Stopwatch target = new Stopwatch()){
+                // run the algorithm
+                int[] arr = supplier.get();
+                function.accept(arr);
+                double runtime = target.lap();
+                // log the time
+                for(TimeLogger log: timeLoggers){
+                    log.log(runtime, n);
+                }
+            }
 
-        // print out the three sum result
-
-        // print out the time log
-
-//        if(description.equals("ThreeSumQuadratic")) return;
-
-
-
-//        if (description.equals("ThreeSumQuadradrithmic")) return;
-
-
-
-
-
-
-
-//throw new RuntimeException("implementation missing");
     }
 
     private final static TimeLogger[] timeLoggersCubic = {

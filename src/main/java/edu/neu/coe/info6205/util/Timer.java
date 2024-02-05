@@ -1,5 +1,6 @@
 package edu.neu.coe.info6205.util;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -64,13 +65,15 @@ public class Timer {
         // TO BE IMPLEMENTED : note that the timer is running when this method is called and should still be running when it returns.
 
         T resultFromSupplier = supplier.get();
-        System.out.println("Input: " + resultFromSupplier);
+//        System.out.println("Input from supplier: " + Arrays.toString((Integer []) resultFromSupplier));
 
             for (int i = 0; i < n; i++){
 
-                System.out.println("lap = " + i);
+//                System.out.println("lap = " + i);
 
                 if((preFunction != null) && (postFunction != null)){
+//                    System.out.println("-- function + pre function + post function --");
+
                     pauseAndLap();
                     T resultFromPreFunc = preFunction.apply(resultFromSupplier);
                     resume();
@@ -78,18 +81,23 @@ public class Timer {
                     pause();
                     postFunction.accept(resultFromFunc);
                     resume();
+
                 } else if ((preFunction == null) && (postFunction != null)) {
                     U resultFromFunc = function.apply(resultFromSupplier);
                     pauseAndLap();
                     postFunction.accept(resultFromFunc);
                     resume();
+//                    System.out.println("-- function + post function --");
+
                 } else if(preFunction != null){
                     pauseAndLap();
                     T resultFromPreFunc = preFunction.apply(resultFromSupplier);
                     resume();
+//                    System.out.println("-- function + pre function --");
                     function.apply(resultFromPreFunc);
                 } else {
                     lap();
+//                    System.out.println("-- only function --");
                     function.apply(resultFromSupplier);
                 }
             }

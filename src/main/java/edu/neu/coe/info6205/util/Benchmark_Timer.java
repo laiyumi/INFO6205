@@ -41,6 +41,7 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
      * @return at least 2 and at most the lower of 6 or m/15.
      */
     static int getWarmupRuns(int m) {
+//        System.out.println("warm up runs------- " + Integer.max(2, Integer.min(6, m / 15)));
         return Integer.max(2, Integer.min(6, m / 15));
     }
 
@@ -54,14 +55,16 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
     @Override
     public double runFromSupplier(Supplier<T> supplier, int m) {
         logger.info("Begin run: " + description + " with " + formatWhole(m) + " runs");
-        // Warmup phase
+        // Warmup phase: takes t, applies fRun, then return the same t
         final Function<T, T> function = t -> {
             fRun.accept(t);
             return t;
         };
+        System.out.println(" ----------- Warmup runs -----------");
         new Timer().repeat(getWarmupRuns(m), true, supplier, function, fPre, null);
 
         // Timed phase
+        System.out.println(" ----------- Real runs -----------");
         return new Timer().repeat(m, false, supplier, function, fPre, fPost);
     }
 

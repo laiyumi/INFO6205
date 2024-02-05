@@ -4,6 +4,9 @@
 
 package edu.neu.coe.info6205.util;
 
+import edu.neu.coe.info6205.sort.elementary.InsertionSort;
+import edu.neu.coe.info6205.threesum.ThreeSumQuadratic;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -117,6 +120,12 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
      */
     public Benchmark_Timer(String description, Consumer<T> f) {
         this(description, null, f, null);
+    }
+
+
+    public static void main(String[] args) {
+
+
     }
 
     private final String description;

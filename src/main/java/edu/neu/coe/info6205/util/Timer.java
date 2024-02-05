@@ -1,5 +1,6 @@
 package edu.neu.coe.info6205.util;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -62,33 +63,41 @@ public class Timer {
     public <T, U> double repeat(int n, boolean warmup, Supplier<T> supplier, Function<T, U> function, UnaryOperator<T> preFunction, Consumer<U> postFunction) {
         // TO BE IMPLEMENTED : note that the timer is running when this method is called and should still be running when it returns.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // SKELETON
-         return 0;
-        // END SOLUTION
+        T resultFromSupplier = supplier.get();
+        //  run the given target function ten times to get the system "warmed up".
+        if(warmup){
+            for (int k = 0; k < 10; k++){
+                function.apply(resultFromSupplier);
+            }
+        }
+        for (int i = 0; i < n; i++){
+            if((preFunction != null) && (postFunction != null)){
+                pauseAndLap();
+                T resultFromPreFunc = preFunction.apply(resultFromSupplier);
+                resume();
+                U resultFromFunc = function.apply(resultFromPreFunc);
+                pause();
+                postFunction.accept(resultFromFunc);
+                resume();
+            } else if ((preFunction == null) && (postFunction != null)) {
+                U resultFromFunc = function.apply(resultFromSupplier);
+                pauseAndLap();
+                postFunction.accept(resultFromFunc);
+                resume();
+            } else if(preFunction != null){
+                pauseAndLap();
+                T resultFromPreFunc = preFunction.apply(resultFromSupplier);
+                resume();
+                function.apply(resultFromPreFunc);
+            } else {
+                lap();
+                function.apply(resultFromSupplier);
+            }
+        }
+        pause();
+        final double result = meanLapTime();
+        resume();
+        return result;
     }
 
     /**
@@ -110,6 +119,7 @@ public class Timer {
      */
     public double meanLapTime() {
         if (running) throw new TimerException();
+        System.out.println("calculating mean lap time: to millisecs = " + toMillisecs(ticks) + "laps=" + laps);
         return toMillisecs(ticks) / laps;
     }
 
@@ -213,11 +223,8 @@ public class Timer {
      * @return the number of ticks for the system clock. Currently defined as nano time.
      */
     private static long getClock() {
-        // TO BE IMPLEMENTED 
-
-        // SKELETON
-         return 0;
-        // END SOLUTION
+        // TO BE IMPLEMENTED
+        return System.nanoTime();
     }
 
     /**
@@ -229,10 +236,7 @@ public class Timer {
      */
     private static double toMillisecs(long ticks) {
         // TO BE IMPLEMENTED 
-
-        // SKELETON
-         return 0;
-        // END SOLUTION
+        return ticks / 1_000_000.0;
     }
 
     final static LazyLogger logger = new LazyLogger(Timer.class);

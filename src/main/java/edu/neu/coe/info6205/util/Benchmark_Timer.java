@@ -123,11 +123,6 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
     }
 
 
-    public static void main(String[] args) {
-
-
-    }
-
     private final String description;
     private final UnaryOperator<T> fPre;
     private final Consumer<T> fRun;

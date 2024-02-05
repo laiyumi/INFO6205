@@ -64,36 +64,31 @@ public class Timer {
         // TO BE IMPLEMENTED : note that the timer is running when this method is called and should still be running when it returns.
 
         T resultFromSupplier = supplier.get();
-        //  run the given target function ten times to get the system "warmed up".
-        if(warmup){
-            for (int k = 0; k < 10; k++){
-                function.apply(resultFromSupplier);
+            for (int i = 0; i < n; i++){
+                if((preFunction != null) && (postFunction != null)){
+                    pauseAndLap();
+                    T resultFromPreFunc = preFunction.apply(resultFromSupplier);
+                    resume();
+                    U resultFromFunc = function.apply(resultFromPreFunc);
+                    pause();
+                    postFunction.accept(resultFromFunc);
+                    resume();
+                } else if ((preFunction == null) && (postFunction != null)) {
+                    U resultFromFunc = function.apply(resultFromSupplier);
+                    pauseAndLap();
+                    postFunction.accept(resultFromFunc);
+                    resume();
+                } else if(preFunction != null){
+                    pauseAndLap();
+                    T resultFromPreFunc = preFunction.apply(resultFromSupplier);
+                    resume();
+                    function.apply(resultFromPreFunc);
+                } else {
+                    lap();
+                    function.apply(resultFromSupplier);
+                }
             }
-        }
-        for (int i = 0; i < n; i++){
-            if((preFunction != null) && (postFunction != null)){
-                pauseAndLap();
-                T resultFromPreFunc = preFunction.apply(resultFromSupplier);
-                resume();
-                U resultFromFunc = function.apply(resultFromPreFunc);
-                pause();
-                postFunction.accept(resultFromFunc);
-                resume();
-            } else if ((preFunction == null) && (postFunction != null)) {
-                U resultFromFunc = function.apply(resultFromSupplier);
-                pauseAndLap();
-                postFunction.accept(resultFromFunc);
-                resume();
-            } else if(preFunction != null){
-                pauseAndLap();
-                T resultFromPreFunc = preFunction.apply(resultFromSupplier);
-                resume();
-                function.apply(resultFromPreFunc);
-            } else {
-                lap();
-                function.apply(resultFromSupplier);
-            }
-        }
+
         pause();
         final double result = meanLapTime();
         resume();
@@ -119,7 +114,7 @@ public class Timer {
      */
     public double meanLapTime() {
         if (running) throw new TimerException();
-        System.out.println("calculating mean lap time: to millisecs = " + toMillisecs(ticks) + "laps=" + laps);
+        System.out.println("calculating mean lap time: to millisecs = " + toMillisecs(ticks) + " laps=" + laps);
         return toMillisecs(ticks) / laps;
     }
 

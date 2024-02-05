@@ -64,7 +64,12 @@ public class Timer {
         // TO BE IMPLEMENTED : note that the timer is running when this method is called and should still be running when it returns.
 
         T resultFromSupplier = supplier.get();
+        System.out.println("Input: " + resultFromSupplier);
+
             for (int i = 0; i < n; i++){
+
+                System.out.println("lap = " + i);
+
                 if((preFunction != null) && (postFunction != null)){
                     pauseAndLap();
                     T resultFromPreFunc = preFunction.apply(resultFromSupplier);
@@ -114,7 +119,7 @@ public class Timer {
      */
     public double meanLapTime() {
         if (running) throw new TimerException();
-        System.out.println("calculating mean lap time: to millisecs = " + toMillisecs(ticks) + " laps=" + laps);
+        System.out.println("Mean lap time = " + toMillisecs(ticks) / laps);
         return toMillisecs(ticks) / laps;
     }
 

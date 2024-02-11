@@ -143,6 +143,8 @@ public class UF_HWQUPC_Test {
         h.connect(0, 2);
         h.connect(3, 4);
         h.connect(3, 5);
+//        System.out.println("first: " + h);
+
         assertEquals(0, h.find(0));
         assertEquals(0, h.find(1));
         assertEquals(0, h.find(2));
@@ -150,6 +152,8 @@ public class UF_HWQUPC_Test {
         assertEquals(3, h.find(4));
         assertEquals(3, h.find(5));
         h.connect(0, 3);
+//        System.out.println("second: " + h);
+
         assertEquals(0, h.find(0));
         assertEquals(0, h.find(1));
         assertEquals(0, h.find(2));

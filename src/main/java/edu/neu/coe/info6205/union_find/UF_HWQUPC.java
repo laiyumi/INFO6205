@@ -58,7 +58,7 @@ public class UF_HWQUPC implements UF {
 
     public void show() {
         for (int i = 0; i < parent.length; i++) {
-            System.out.printf("%d: %d, %d\n", i, parent[i], height[i]);
+            System.out.printf("site %d: root %d, height %d\n", i, parent[i], height[i]);
         }
     }
 
@@ -81,17 +81,25 @@ public class UF_HWQUPC implements UF {
     public int find(int p) {
         validate(p);
         int root = p;
-        // TO BE IMPLEMENTED 
+        // TO BE IMPLEMENTED
 
+        if (pathCompression){
+            doPathCompression(p);
+        }
 
+        // find the root
+        while(root != parent[root]){
+            root = parent[root];
+        }
 
+        System.out.println("the root of " + p + " is "+ root);
+        return root;
 
-
-throw new RuntimeException("implementation missing");
+        //throw new RuntimeException("implementation missing");
     }
 
     /**
-     * Returns true if the the two sites are in the same component.
+     * Returns true if the two sites are in the same component.
      *
      * @param p the integer representing one site
      * @param q the integer representing the other site
@@ -175,13 +183,20 @@ throw new RuntimeException("implementation missing");
     private void mergeComponents(int i, int j) {
         // TO BE IMPLEMENTED  make shorter root point to taller one
 
+        if (height[i] < height[j]) {
+            parent[i] = j;
+            height[j] += height[i];
 
+        } else if (height[i] > height[j]){
+            parent[j] = i;
+            height[i] += height[j];
+        }
+        // if two trees have same height
+        else{
+            parent[j] = i;
+            height[i] += 1;
+        }
 
-
-
-
-
-        // SKELETON
         // END SOLUTION
     }
 
@@ -191,7 +206,11 @@ throw new RuntimeException("implementation missing");
     private void doPathCompression(int i) {
         // TO BE IMPLEMENTED  update parent to value of grandparent
 
-        // SKELETON
+        while(i != parent[i]){
+            parent[i] = parent[parent[i]];
+            i = parent[i];
+        }
+
         // END SOLUTION
     }
 }

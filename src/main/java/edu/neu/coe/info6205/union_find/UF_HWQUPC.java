@@ -8,6 +8,8 @@
 package edu.neu.coe.info6205.union_find;
 
 import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
 
 /**
  * Height-weighted Quick Union with Path Compression
@@ -92,7 +94,7 @@ public class UF_HWQUPC implements UF {
             root = parent[root];
         }
 
-        System.out.println("the root of " + p + " is "+ root);
+//        System.out.println("the root of " + p + " is "+ root);
         return root;
 
         //throw new RuntimeException("implementation missing");
@@ -211,6 +213,58 @@ public class UF_HWQUPC implements UF {
             i = parent[i];
         }
 
+
         // END SOLUTION
+    }
+
+    /**
+     * Return the number of connections that it takes to connect n sites
+     *
+     * @param n the number of sites
+     * @return the number of connections
+     */
+    public static int count(int n){
+        // Initializes an empty union–find data structure with n site.
+        // Each site is initially in its own component.
+        UF_HWQUPC h = new UF_HWQUPC(n);
+
+        // generate random pairs of int between 0 and n-1
+        Random random = new Random();
+        int numOfConnections = 0;
+        int numOfTries = 0;
+
+        // loop over until all components are connected
+        while(h.count > 1){
+            int p = random.nextInt(n);
+            int q = random.nextInt(n);
+
+            // check if the pair of component is connected
+            if(!h.connected(p, q)){
+                h.union(p, q);
+                numOfConnections += 1;
+
+            }
+
+            numOfTries += 1;
+
+        }
+
+        System.out.println("The number of connections: " + numOfConnections + " The number of pairs: " + numOfTries);
+
+        return numOfConnections;
+
+    }
+
+    public static void main(String[] args) {
+
+        // set up the testing inputs
+        int a = 1000;
+
+        for(int i = 1; i < 100; i++){
+            int n = 2 * a * i;
+            System.out.print("n = " + n + " " );
+            count(n);
+        }
+
     }
 }

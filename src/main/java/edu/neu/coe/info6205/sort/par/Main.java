@@ -17,16 +17,25 @@ import java.util.concurrent.ForkJoinPool;
 public class Main {
 
     public static void main(String[] args) {
+        // customize the parallelism level
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "16");
         processArgs(args);
         System.out.println("Degree of parallelism: " + ForkJoinPool.getCommonPoolParallelism());
         Random random = new Random();
-        int[] array = new int[2000000];
+
+        // set up array size
+        int size = 2000000;
+        int[] array = new int[size];
         ArrayList<Long> timeList = new ArrayList<>();
-        for (int j = 50; j < 100; j++) {
-            ParSort.cutoff = 10000 * (j + 1);
-            // for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
+
+        System.out.println("array size: " + size);
+        System.out.println("array type: random array");
+
+        for (int j = 0; j < 100; j++) {
+            ParSort.cutoff = 20000 * (j + 1);
             long time;
             long startTime = System.currentTimeMillis();
+            // sort array ten times
             for (int t = 0; t < 10; t++) {
                 for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
                 ParSort.sort(array, 0, array.length);
@@ -35,17 +44,18 @@ public class Main {
             time = (endTime - startTime);
             timeList.add(time);
 
-
-            System.out.println("cutoff：" + (ParSort.cutoff) + "\t\t10times Time:" + time + "ms");
+            System.out.println("cutoff：" + (ParSort.cutoff) + "\t\tRun 10 times \t\tTotal Run Time:" + time + "ms");
 
         }
         try {
+            // write the result into a csv file
             FileOutputStream fis = new FileOutputStream("./src/result.csv");
             OutputStreamWriter isr = new OutputStreamWriter(fis);
             BufferedWriter bw = new BufferedWriter(isr);
             int j = 0;
             for (long i : timeList) {
-                String content = (double) 10000 * (j + 1) / 2000000 + "," + (double) i / 10 + "\n";
+                // the ratio of the cutoff and the responding run time
+                String content = (double) 20000 * (j + 1) / size + "," + (double) i / 10 + "\n";
                 j++;
                 bw.write(content);
                 bw.flush();

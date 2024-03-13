@@ -13,8 +13,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static edu.neu.coe.info6205.util.Utilities.round;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -31,9 +33,11 @@ public class HeapSortTest {
         Integer[] xs = list.toArray(new Integer[0]);
         final Config config = Config.setupConfig("true", "0", "1", "", "");
         Helper<Integer> helper = HelperFactory.create("HeapSort", list.size(), config);
+
         helper.init(list.size());
         final PrivateMethodTester privateMethodTester = new PrivateMethodTester(helper);
         final StatPack statPack = (StatPack) privateMethodTester.invokePrivate("getStatPack");
+
         SortWithHelper<Integer> sorter = new HeapSort<Integer>(helper);
         sorter.preProcess(xs);
 //        System.out.println(Arrays.toString(xs));
@@ -44,6 +48,7 @@ public class HeapSortTest {
         assertEquals(7, (int) statPack.getStatistics(InstrumentedHelper.COMPARES).mean());
         assertEquals(8, (int) statPack.getStatistics(InstrumentedHelper.SWAPS).mean());
         assertEquals(7 * 2 + 8 * 4, (int) statPack.getStatistics(InstrumentedHelper.HITS).mean());
+
     }
 
     @Test
@@ -58,7 +63,7 @@ public class HeapSortTest {
         GenericSort<Integer> sorter = new HeapSort<Integer>(helper);
         Integer[] ys = sorter.sort(xs);
         assertTrue(helper.sorted(ys));
-        System.out.println(sorter.toString());
+//        System.out.println(sorter.toString());
     }
 
     @Test
@@ -80,6 +85,9 @@ public class HeapSortTest {
         final Config config = Config.setupConfig("true", "0", "1", "", "");
         int n = 100;
         Helper<Integer> helper = HelperFactory.create("HeapSort", n, config);
+
+        System.out.println(helper);
+
         helper.init(n);
         final PrivateMethodTester privateMethodTester = new PrivateMethodTester(helper);
         final StatPack statPack = (StatPack) privateMethodTester.invokePrivate("getStatPack");
@@ -98,6 +106,12 @@ public class HeapSortTest {
         assertEquals(581, swaps);
         final int hits = (int) statPack.getStatistics(InstrumentedHelper.HITS).mean();
         assertEquals(2 * compares + 4 * swaps, hits);
+
+
+        System.out.println(statPack);
+        final int inversions = (int) statPack.getStatistics(InstrumentedHelper.INVERSIONS).mean();
+        final int fixes = (int) statPack.getStatistics(InstrumentedHelper.FIXES).mean();
+        final int copies = (int) statPack.getStatistics(InstrumentedHelper.COPIES).mean();
     }
 
     @Test

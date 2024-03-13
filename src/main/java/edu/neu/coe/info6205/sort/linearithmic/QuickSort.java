@@ -2,6 +2,7 @@ package edu.neu.coe.info6205.sort.linearithmic;
 
 import edu.neu.coe.info6205.sort.Helper;
 import edu.neu.coe.info6205.sort.SortWithHelper;
+import edu.neu.coe.info6205.sort.elementary.HeapSort;
 import edu.neu.coe.info6205.sort.elementary.InsertionSort;
 import edu.neu.coe.info6205.util.Config;
 import edu.neu.coe.info6205.util.LazyLogger;
@@ -14,11 +15,14 @@ public abstract class QuickSort<X extends Comparable<X>> extends SortWithHelper<
     public QuickSort(String description, int N, Config config) {
         super(description, N, config);
         insertionSort = new InsertionSort<>(getHelper());
+        heapSort = new HeapSort<>(getHelper());
     }
 
     public QuickSort(Helper<X> helper) {
         super(helper);
         insertionSort = new InsertionSort<>(helper);
+        heapSort = new HeapSort<>(getHelper());
+
     }
 
     /**
@@ -93,11 +97,23 @@ public abstract class QuickSort<X extends Comparable<X>> extends SortWithHelper<
      * @return true if there is no further work to be done.
      */
     protected boolean terminator(X[] xs, int from, int to, int depth) {
+
+        // Calculate max depth (Replace 'n' with appropriate value)
+        int maxDepth = (int)((2 * Math.log(xs.length)) / Math.log(2));
+
         // NOTE: we reduce the cutoff by 1 so that we can use 1 to disable cutoff (because 0 gives the default of 7).
         if (to <= from + getHelper().cutoff() - 1) {
             insertionSort.sort(xs, from, to);
+//            System.out.println("<< Start to use insertion sort");
+
+            return true;
+        } else if(depth > maxDepth) {
+            heapSort.sort(xs, from, to);  // Replace HeapSort.sort with your implementation of heap sort
+//            System.out.println("<< Start to use heap sort");
             return true;
         }
+
+
         return false;
     }
 
@@ -123,6 +139,7 @@ public abstract class QuickSort<X extends Comparable<X>> extends SortWithHelper<
     }
 
     private final InsertionSort<X> insertionSort;
+    private final HeapSort<X> heapSort;
 
     protected Partitioner<X> partitioner;
 

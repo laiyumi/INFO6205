@@ -3,13 +3,8 @@
  */
 package edu.neu.coe.info6205.util;
 
-import edu.neu.coe.info6205.sort.BaseHelper;
-import edu.neu.coe.info6205.sort.Helper;
-import edu.neu.coe.info6205.sort.SortWithHelper;
-import edu.neu.coe.info6205.sort.elementary.BubbleSort;
-import edu.neu.coe.info6205.sort.elementary.InsertionSort;
-import edu.neu.coe.info6205.sort.elementary.RandomSort;
-import edu.neu.coe.info6205.sort.elementary.ShellSort;
+import edu.neu.coe.info6205.sort.*;
+import edu.neu.coe.info6205.sort.elementary.*;
 import edu.neu.coe.info6205.sort.linearithmic.TimSort;
 import edu.neu.coe.info6205.sort.linearithmic.*;
 
@@ -43,7 +38,7 @@ public class SortBenchmark {
         benchmark.sortStrings(Arrays.stream(args).map(Integer::parseInt));
         if (benchmark.isConfigBenchmarkIntegerSorter("shellSort"))
             benchmark.sortIntegersByShellSort(config.getInt("shellsort", "n", 100000));
-//        benchmark.sortLocalDateTimes(config.getInt("benchmarkdatesorters", "n", 100000), config);
+        benchmark.sortLocalDateTimes(config.getInt("benchmarkdatesorters", "n", 100000), config);
     }
 
     public void sortLocalDateTimes(final int n, Config config) throws IOException {
@@ -77,6 +72,12 @@ public class SortBenchmark {
      * @param nRuns  the number of runs.
      */
     void benchmarkStringSorters(String[] words, int nWords, int nRuns) {
+
+        System.out.printf("-------- Array size: %d --------", nWords);
+        System.out.println(" ");
+
+        logger.info(">>>> Testing non-instrumented sorts ");
+
         logger.info("Testing pure sorts with " + formatWhole(nRuns) + " runs of sorting " + formatWhole(nWords) + " words");
         Random random = new Random();
 
@@ -94,6 +95,12 @@ public class SortBenchmark {
 
         if (isConfigBenchmarkStringSorter("quicksort"))
             runStringSortBenchmark(words, nWords, nRuns, new QuickSort_Basic<>(nWords, config), timeLoggersLinearithmic);
+
+        if (isConfigBenchmarkStringSorter("heapsort")) {
+            Helper<String> helper = HelperFactory.create("Heapsort", nWords, config);
+            runStringSortBenchmark(words, nWords, nRuns, new HeapSort<>(helper), timeLoggersLinearithmic);
+
+        }
 
         if (isConfigBenchmarkStringSorter("introsort"))
             runStringSortBenchmark(words, nWords, nRuns, new IntroSort<>(nWords, config), timeLoggersLinearithmic);
@@ -121,22 +128,45 @@ public class SortBenchmark {
      * @param nRuns  the number of runs.
      */
     void benchmarkStringSortersInstrumented(String[] words, int nWords, int nRuns) {
+
+        System.out.printf("-------- Array size: %d --------", nWords);
+        System.out.println(" ");
+
+        logger.info(">>>> Testing instrumented sorts");
+
         logger.info("Testing with " + formatWhole(nRuns) + " runs of sorting " + formatWhole(nWords) + " words" + (config.isInstrumented() ? " and instrumented" : ""));
         Random random = new Random();
 
         if (isConfigBenchmarkStringSorter("puresystemsort")) runPureSystemSortBenchmark(words, nWords, nRuns, random);
 
-        if (isConfigBenchmarkStringSorter("mergesort"))
+        if (isConfigBenchmarkStringSorter("mergesort")) {
             runMergeSortBenchmark(words, nWords, nRuns, isConfigBenchmarkMergeSort("insurance"), isConfigBenchmarkMergeSort("nocopy"));
+
+        }
 
         if (isConfigBenchmarkStringSorter("quicksort3way"))
             runStringSortBenchmark(words, nWords, nRuns, new QuickSort_3way<>(nWords, config), timeLoggersLinearithmic);
 
-        if (isConfigBenchmarkStringSorter("quicksortDualPivot"))
-            runStringSortBenchmark(words, nWords, nRuns, new QuickSort_DualPivot<>(nWords, config), timeLoggersLinearithmic);
+        if (isConfigBenchmarkStringSorter("quicksortDualPivot")) {
+            Helper<String> helper = HelperFactory.create("QuicksortDualPivot", nWords, config);
+            runStringSortBenchmark(words, nWords, nRuns, new QuickSort_DualPivot<>(helper), timeLoggersLinearithmic);
+            helper.init(nWords);
+            System.out.println(helper);
+            System.out.println(helper.showStats());
+        }
+
+
 
         if (isConfigBenchmarkStringSorter("quicksort"))
             runStringSortBenchmark(words, nWords, nRuns, new QuickSort_Basic<>(nWords, config), timeLoggersLinearithmic);
+
+        if (isConfigBenchmarkStringSorter("heapsort")) {
+            Helper<String> helper = HelperFactory.create("Heapsort", nWords, config);
+            runStringSortBenchmark(words, nWords, nRuns, new HeapSort<>(helper), timeLoggersLinearithmic);
+            helper.init(nWords);
+            System.out.println(helper);
+            System.out.println(helper.showStats());
+        }
 
         if (isConfigBenchmarkStringSorter("introsort"))
             runStringSortBenchmark(words, nWords, nRuns, new IntroSort<>(nWords, config), timeLoggersLinearithmic);
@@ -348,13 +378,29 @@ public class SortBenchmark {
 
     private void runMergeSortBenchmark(String[] words, int nWords, int nRuns, Boolean insurance, Boolean noCopy) {
         Config x = config.copy(MergeSort.MERGESORT, MergeSort.INSURANCE, insurance.toString()).copy(MergeSort.MERGESORT, MergeSort.NOCOPY, noCopy.toString());
-        runStringSortBenchmark(words, nWords, nRuns, new MergeSort<>(nWords, x), timeLoggersLinearithmic);
+        if(x.isInstrumented()){
+            Helper<String> helper = HelperFactory.create("MergeSort", nWords, config);
+            runStringSortBenchmark(words, nWords, nRuns, new MergeSort<>(helper), timeLoggersLinearithmic);
+            helper.init(nWords);
+            System.out.println(helper);
+            System.out.println(helper.showStats());
+        } else {
+            runStringSortBenchmark(words, nWords, nRuns, new MergeSort<>(nWords, x), timeLoggersLinearithmic);
+        }
+
     }
 
+
     private void doLeipzigBenchmark(String resource, int nWords, int nRuns) throws FileNotFoundException {
-        benchmarkStringSorters(getWords(resource, SortBenchmark::getLeipzigWords), nWords, nRuns);
-        if (isConfigBoolean(Config.HELPER, BaseHelper.INSTRUMENT))
+
+        // if instrumenting is enable, do instrumenting sort
+        if (isConfigBoolean(Config.HELPER, BaseHelper.INSTRUMENT)){
             benchmarkStringSortersInstrumented(getWords(resource, SortBenchmark::getLeipzigWords), nWords, nRuns);
+
+        } else {
+            // invoke pure sorts by default
+            benchmarkStringSorters(getWords(resource, SortBenchmark::getLeipzigWords), nWords, nRuns);
+        }
     }
 
     @SuppressWarnings("SameParameterValue")

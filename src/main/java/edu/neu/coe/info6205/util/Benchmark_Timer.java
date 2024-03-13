@@ -54,18 +54,23 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
      */
     @Override
     public double runFromSupplier(Supplier<T> supplier, int m) {
+
         logger.info("Begin run: " + description + " with " + formatWhole(m) + " runs");
+
         // Warmup phase: takes t, applies fRun, then return the same t
         final Function<T, T> function = t -> {
             fRun.accept(t);
             return t;
         };
-        System.out.println(" ----------- Warmup runs -----------");
-        new Timer().repeat(getWarmupRuns(m), true, supplier, function, fPre, null);
 
-        // Timed phase
-        System.out.println(" ----------- Real runs -----------");
-        return new Timer().repeat(m, false, supplier, function, fPre, fPost);
+        double warmupTime = new Timer().repeat(getWarmupRuns(m), true, supplier, function, fPre, null);
+        logger.info("Warmup runtime: " + warmupTime);
+
+        double realTime = new Timer().repeat(m, false, supplier, function, fPre, fPost);;
+        logger.info("Real runtime: " + realTime);
+
+        return realTime;
+
     }
 
     /**

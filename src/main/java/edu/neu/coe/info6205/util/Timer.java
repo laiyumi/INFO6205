@@ -127,7 +127,7 @@ public class Timer {
      */
     public double meanLapTime() {
         if (running) throw new TimerException();
-        System.out.println("Mean lap time = " + toMillisecs(ticks) / laps);
+//        System.out.println("Mean lap time = " + toMillisecs(ticks) / laps);
         return toMillisecs(ticks) / laps;
     }
 

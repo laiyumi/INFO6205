@@ -59,37 +59,18 @@ public class MergeSort<X extends Comparable<X>> extends SortWithHelper<X> {
         Config config = helper.getConfig();
         boolean insurance = config.getBoolean(MERGESORT, INSURANCE);
         boolean noCopy = config.getBoolean(MERGESORT, NOCOPY);
-        if (to <= from + helper.cutoff()) {
+        // default cutoff = 7
+        if (to - from <= helper.cutoff()) {
             insertionSort.sort(a, from, to);
             return;
-        }
-        // TO BE IMPLEMENTED  : implement merge sort with insurance and no-copy optimizations
-        int mid = from + (to - from ) / 2;
-
-        if(noCopy) {
-            // eliminate the copy to the auxiliary array
+        } else {
+            // TO BE IMPLEMENTED  : implement merge sort with insurance and no-copy optimizations
+            int mid = from + (to - from ) / 2;
             sort(aux, a, from, mid);
             sort(aux, a, mid, to);
-            if (insurance && helper.less(aux[mid-1], aux[mid])) {
-//                System.out.println("optimize with noCopy + insurance");
-                return;
-            } else {
-//                System.out.println("optimize with noCopy");
-                merge(aux, a, from, mid, to);
-            }
-        } else {
-            sort(a, aux, from, mid);
-            sort(a, aux, mid, to);
-            if (insurance && helper.less(a[mid-1], a[mid])) {
-//                System.out.println("optimize with insurance");
-                return;
-            } else {
-//                System.out.println("No optimize");
-                merge(a, aux, from, mid, to);
-
-            }
-
+            merge(aux, a, from, mid, to);
         }
+
     }
 
     // CONSIDER combine with MergeSortBasic perhaps.

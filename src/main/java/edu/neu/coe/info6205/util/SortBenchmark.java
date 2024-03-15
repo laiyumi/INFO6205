@@ -377,16 +377,16 @@ public class SortBenchmark {
 //    }
 
     private void runMergeSortBenchmark(String[] words, int nWords, int nRuns, Boolean insurance, Boolean noCopy) {
+//        Config x = config.copy(MergeSort.MERGESORT, MergeSort.INSURANCE, insurance.toString()).copy(MergeSort.MERGESORT, MergeSort.NOCOPY, noCopy.toString());
+//        runStringSortBenchmark(words, nWords, nRuns, new MergeSort<>(nWords, x), timeLoggersLinearithmic);
+
         Config x = config.copy(MergeSort.MERGESORT, MergeSort.INSURANCE, insurance.toString()).copy(MergeSort.MERGESORT, MergeSort.NOCOPY, noCopy.toString());
-        if(x.isInstrumented()){
-            Helper<String> helper = HelperFactory.create("MergeSort", nWords, config);
-            runStringSortBenchmark(words, nWords, nRuns, new MergeSort<>(helper), timeLoggersLinearithmic);
-            helper.init(nWords);
-            System.out.println(helper);
-            System.out.println(helper.showStats());
-        } else {
-            runStringSortBenchmark(words, nWords, nRuns, new MergeSort<>(nWords, x), timeLoggersLinearithmic);
-        }
+        Helper<String> helper = HelperFactory.create("Merge Sort", nWords, x);
+        runStringSortBenchmark(words, nWords, nRuns, new MergeSort<>(helper), timeLoggersLinearithmic);
+        helper.init(nWords);
+        System.out.println(helper);
+        System.out.println(helper.showStats());
+
 
     }
 

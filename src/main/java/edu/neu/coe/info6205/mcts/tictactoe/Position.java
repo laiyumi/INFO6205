@@ -19,6 +19,7 @@ public class Position {
      * @return a Position.
      */
     static Position parsePosition(final String grid, final int last) {
+        // create a matrix of 3x3
         int[][] matrix = new int[gridSize][gridSize];
         int count = 0;
         String[] rows = grid.split("\\n", gridSize);
@@ -26,6 +27,7 @@ public class Position {
             String[] cells = rows[i].split(" ", gridSize);
             for (int j = 0; j < gridSize; j++) {
                 int cell = parseCell(cells[j].trim());
+                // count represents the total number of 0s and 1s
                 if (cell >= 0) count++;
                 matrix[i][j] = cell;
             }
@@ -59,12 +61,17 @@ public class Position {
         if (full()) throw new RuntimeException("Position is full");
         if (player == last) throw new RuntimeException("consecutive moves by same player: " + player);
         int[][] matrix = copyGrid();
+        // check if the position is available
         if (matrix[x][y] < 0) {
-            // TO BE IMPLEMENTED 
-             return null;
+            // TO BE IMPLEMENTED
+            // assign this position to the current player
+            matrix[x][y] = player;
+            // refresh the game board
+            return new Position(matrix, count+1 ,player);
             // END SOLUTION
+        } else {
+            throw new RuntimeException("Position is occupied: " + x + ", " + y);
         }
-        throw new RuntimeException("Position is occupied: " + x + ", " + y);
     }
 
     /**
@@ -77,9 +84,12 @@ public class Position {
         List<int[]> result = new ArrayList<>();
         for (int i = 0; i < gridSize; i++)
             for (int j = 0; j < gridSize; j++)
-                if (grid[i][j] < 0)
-                    // TO BE IMPLEMENTED 
-         ;
+                // return all the available positions
+                if (grid[i][j] < 0) {
+                    // TO BE IMPLEMENTED
+                    // add this position to the arrays
+                    result.add(new int[]{i, j});
+                }
         // END SOLUTION
         return result;
     }
@@ -140,9 +150,18 @@ public class Position {
      * @return true if there are three cells in a line that are the same and equal to the last player.
      */
     boolean threeInARow() {
-        // TO BE IMPLEMENTED 
-         return false;
-        // END SOLUTION
+        // TO BE IMPLEMENTED
+        for(int i = 0; i < gridSize; i++){
+            int[] row = projectRow(i);
+            int[] col = projectCol(i);
+            int[] mainDiagonal = projectDiag(true);
+            int[] counterDiagonal = projectDiag(false);
+
+            if(Arrays.equals(row,xxx) || Arrays.equals(col,xxx) || Arrays.equals(mainDiagonal,xxx) || Arrays.equals(counterDiagonal,xxx)){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -221,6 +240,7 @@ public class Position {
     }
 
     @Override
+    // compare two Position objects by their grid arrays
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Position)) return false;

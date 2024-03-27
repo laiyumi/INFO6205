@@ -18,9 +18,23 @@ public class TicTacToe implements Game<TicTacToe> {
     public static void main(String[] args) {
         // NOTE the behavior of the game to be run will be based on the TicTacToe instance field: random.
         State<TicTacToe> state = new TicTacToe().runGame();
-        if (state.winner().isPresent())
+        if (state.winner().isPresent()){
             System.out.println("TicTacToe: winner is: " + state.winner().get());
-        else System.out.println("TicTacToe: draw");
+            // display the result
+            TicTacToeState ticTacToeState = (TicTacToeState) state;
+            Position position = ticTacToeState.position();
+            System.out.println("Result: \n" + position.render());
+
+        }
+        else {
+            System.out.println("TicTacToe: draw");
+            // display the result
+            TicTacToeState ticTacToeState = (TicTacToeState) state;
+            Position position = ticTacToeState.position();
+            System.out.println("Result: \n" + position.render());
+
+        }
+
     }
 
     public static final int X = 1;
